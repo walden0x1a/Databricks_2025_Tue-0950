@@ -20,9 +20,28 @@ display(df)
 
 # COMMAND ----------
 
-df_tc_dbl = df.withColumn('TotalCharges', col('TotalCharges').cast('Double'))
-df_tc_dbl.printSchema()
+from pyspark.sql.functions import trim, when 
+
+#df_tc_dbl = df.withColumn('TotalCharges', col('TotalCharges').cast('double'))
+
+#display(df.select(trim(col("TotalCharges"))))
+#.cast('double')
+df_tc_dbl = df.withColumn('TotalCharges', trim(col("TotalCharges")))
+
+#df_tc_dbl['TotalCharges Trimmed'] = df_tc_dbl['TotalCharges Trimmed'].apply(lambda x: float(x) if x != '' else 0)
+#df_tc_dbl.replace()
+#df_tc_dbl['TotalCharges Trimmed'] = df_tc_dbl['TotalCharges Trimmed'].replace('', 0)
+
+df_tc_dbl = df.withColumn("TotalCharges", \
+       when(col('TotalCharges')==" " , None) \
+          .otherwise(col('TotalCharges')))
+df_tc_dbl = df_tc_dbl.withColumn('TotalCharges', col('TotalCharges').cast('double'))
+
+#df_tc_dbl = df.withColumn('TotalCharges', df.select(trim(col("TotalCharges"))).cast('double'))
 display(df_tc_dbl)
+#df_tc_dbl = df.withColumn('TotalCharges', col('TotalCharges').cast('Double'))
+#df_tc_dbl.printSchema()
+#display(df_tc_dbl)
 
 # COMMAND ----------
 
